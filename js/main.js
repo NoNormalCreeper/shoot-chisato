@@ -33,33 +33,41 @@ function preload() {
     for (key in assetDict) {
         this.load.image(key, `../assets/${assetDict[key]}.png`);
     }
-    this.load.spritesheet('chisato', 
-        '../assets/chisato-sprite.png',
-        { frameWidth: 960/3, frameHeight: 400 }
-    );
+    // this.load.spritesheet('chisato', 
+    //     '../assets/chisato-sprite.png',
+    //     { frameWidth: 960/3, frameHeight: 400 }
+    // );
+    this.load.json('sprite', '../assets/chisato-sprite.json');
 }
 
 function create() {
     this.matter.world.disableGravity();
     this.add.image(480, 300, 'background');
-    chisato = this.matter.add.sprite(480, (600-400/2), 'sheet', 'chisato', { shape: shape.chisato });
+    sprites = this.cache.json.get('sprite');
+    chisatoRight = this.matter.add.image(480, 425 /* A magic number, gotten from experiments, refers to the ground */,
+        'chisatoRight', null,
+        { shape: sprites.right });
+    chisatoLeft = this.matter.add.image(480, 425, 'chisatoLeft', null, { shape: sprites.left });
+    chisatoStop = this.matter.add.image(480, 425, 'chisatoStop', null, { shape: sprites.stop });
+    changeSkinTo(chisatoStop);
+
     this.matter.world.setBounds();
-    this.anims.create({
-        key: 'left',
-        frames: [ { key: 'chisato', frame: 0 } ],
-        frameRate: 1
-    });
-    this.anims.create({
-        key: 'right',
-        frames: [ { key: 'chisato', frame: 2 } ],
-        frameRate: 1
-    });
-    this.anims.create({
-        key: 'center',
-        frames: [ { key: 'chisato', frame: 1 } ],
-        frameRate: 1
-    });
-    chisato.anims.play('center')
+    // this.anims.create({
+    //     key: 'left',
+    //     frames: [ { key: 'chisato', frame: 0 } ],
+    //     frameRate: 1
+    // });
+    // this.anims.create({
+    //     key: 'right',
+    //     frames: [ { key: 'chisato', frame: 2 } ],
+    //     frameRate: 1
+    // });
+    // this.anims.create({
+    //     key: 'center',
+    //     frames: [ { key: 'chisato', frame: 1 } ],
+    //     frameRate: 1
+    // });
+    // chisato.anims.play('center')
 
     aim = this.matter.add.image(480, 300, 'aimCursor');
     aimCenter = this.matter.add.image(480, 300, 'aimCenter')
@@ -77,9 +85,32 @@ function create() {
 }
 
 function update() {
+    chisato.y = 425   // stick to the ground
     pointer = this.input.activePointer;
     aim.x = pointer.x;
     aim.y = pointer.y;
     aimCenter.x = aim.x
     aimCenter.y = aim.y
+}
+
+function changeSkinTo(targetObject) {
+    bigNum = 100000;
+    try {
+        chisato = chisato;
+    } catch (err) {
+        chisato = chisatoStop;
+    }
+    x = chisato.x
+    y = chisato.y
+    skins = [chisatoLeft, chisatoRight, chisatoStop];
+    for (skin of skins) {
+        if (skin == targetObject) {
+            chisato = skin;
+            chisato.x = x;
+            chisato.y = y;
+        } else { 
+            skin.x = bigNum;
+            skin.y = bigNum;
+        }
+    }
 }
