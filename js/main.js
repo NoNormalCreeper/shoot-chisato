@@ -8,9 +8,9 @@ var config = {
         update: update
     },
     physics: {
-        default: 'arcade',
-        arcade: {
-            debug: false
+        default: 'matter',
+        matter: {
+            debug: true
         }
     },
 };
@@ -40,9 +40,10 @@ function preload() {
 }
 
 function create() {
+    this.matter.world.disableGravity();
     this.add.image(480, 300, 'background');
-    chisato = this.physics.add.sprite(480, (600-400/2), 'chisato');
-    chisato.setCollideWorldBounds(true);
+    chisato = this.matter.add.sprite(480, (600-400/2), 'sheet', 'chisato', { shape: shape.chisato });
+    this.matter.world.setBounds();
     this.anims.create({
         key: 'left',
         frames: [ { key: 'chisato', frame: 0 } ],
@@ -60,22 +61,25 @@ function create() {
     });
     chisato.anims.play('center')
 
-    aim = this.physics.add.image(480, 300, 'aimCursor');
-    aimCenter = this.physics.add.image(480, 300, 'aimCenter')
-    this.input.on('pointermove', function (pointer) {
-        aim.x = pointer.x;
-        aim.y = pointer.y;
-    });
+    aim = this.matter.add.image(480, 300, 'aimCursor');
+    aimCenter = this.matter.add.image(480, 300, 'aimCenter')
+    // this.input.on('pointermove', function (pointer) {
+    //     aim.x = pointer.x;
+    //     aim.y = pointer.y;
+    // });
     // this.input.on('pointerdown', () => {
     //     chisato.anims.play('left');
     // });
 
-    this.physics.add.overlap(aimCenter, chisato, (aim, chisato) => {
-        console.log(1);
-    });
+    // this.matter.add.overlap(aimCenter, chisato, (aim, chisato) => {
+    //     console.log(1);
+    // });
 }
 
 function update() {
+    pointer = this.input.activePointer;
+    aim.x = pointer.x;
+    aim.y = pointer.y;
     aimCenter.x = aim.x
     aimCenter.y = aim.y
 }
