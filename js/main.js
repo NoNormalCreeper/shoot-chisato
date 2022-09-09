@@ -85,7 +85,7 @@ function create() {
 }
 
 function update() {
-    chisato.y = 425   // stick to the ground
+    chisato.y = 425;   // stick to the ground
     pointer = this.input.activePointer;
     aim.x = pointer.x;
     aim.y = pointer.y;
@@ -100,8 +100,8 @@ function changeSkinTo(targetObject) {
     } catch (err) {
         chisato = chisatoStop;
     }
-    x = chisato.x
-    y = chisato.y
+    x = chisato.x;
+    y = chisato.y;
     skins = [chisatoLeft, chisatoRight, chisatoStop];
     for (skin of skins) {
         if (skin == targetObject) {
